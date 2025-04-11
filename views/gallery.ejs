@@ -29,8 +29,20 @@
                 <% images.forEach(function(image) { %>
                     <div class="image-item">
                         <% images.forEach(image => { %>
-                        <img src="/uploads/<%= image %>" alt="<%= image %>" class="image-item" loading="lazy">
-                        <% }); %>
+    <img src="/uploads/<%= image %>" alt="<%= image %>" class="image-item" loading="lazy">
+<% }); %>
+
+<!-- Pagination controls -->
+<div>
+    <% if (currentPage > 1) { %>
+        <a href="/gallery?page=<%= currentPage - 1 %>">Previous</a>
+    <% } %>
+    <span>Page <%= currentPage %> of <%= totalPages %></span>
+    <% if (currentPage < totalPages) { %>
+        <a href="/gallery?page=<%= currentPage + 1 %>">Next</a>
+    <% } %>
+</div>
+
                         <% if (loggedIn) { %>
                             <!-- Delete Button (only for logged-in users) -->
                             <form class="delete-form" action="/delete/<%= image %>" method="POST">
