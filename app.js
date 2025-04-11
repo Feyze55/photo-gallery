@@ -74,6 +74,32 @@ app.get('/logout', (req, res) => {
     });
 });
 
+const itemsPerPage = 20; // Number of images to display per page
+
+app.get('/gallery', checkLogin, (req, res) => {
+    const page = parseInt(req.query.page) || 1;  // Default to page 1 if no page param
+    fs.readdir(uploadFolder, (err, files) => {
+        if (err) {
+            console.error('Error reading upload folder:', err);
+            return res.status(500).send('Error reading upload folder');
+        }
+
+        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif|bmp)$/i.test(file));
+
+        // Pagination logic
+        const totalPages = Math.ceil(imageFiles.length / itemsPerPage);
+        const imagesOnPage = imageFiles.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+        res.render('gallery', {
+            images: imagesOnPage,
+            photoCount: imageFiles.length,
+            totalPages: totalPages,
+            currentPage: page,
+            loggedIn: req.session.loggedIn
+        });
+    });
+});
+
 app.get('/', checkLogin, (req, res) => res.redirect('/gallery'));
 
 app.get('/gallery', checkLogin, (req, res) => {
