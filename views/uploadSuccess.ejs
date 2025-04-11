@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic Setup -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Success</title>
+
+    <!-- External Styles and Fonts -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Poppins:wght@300;400;600" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+
+    <!-- JavaScript to Redirect after 2 Seconds -->
+    <script>
+        // Redirect to the gallery page after 2 seconds
+        setTimeout(function() {
+            window.location.href = "/gallery";
+        }, 2000);
+    </script>
+</head>
+<body class="uploadSuccess">
+    <div class="uploadMessage">
+        <!-- Display success message passed from server -->
+        <h1><%= message %></h1>
+        <p>Please do NOT refresh this page, you will be redirected shortly...</p>
+        
+        <!-- Display a loading animation -->
+        <img src="/images/loadingCat.gif" alt="Loading..." class="loadingCat">
+    </div>
+</body>
+</html>

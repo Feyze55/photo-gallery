@@ -1,0 +1,333 @@
+/* ============================= */
+/* Reset & Base Styles          */
+/* ============================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ============================= */
+/* General Typography           */
+/* ============================= */
+h1 {
+    font-family: 'Nanum Brush Script', cursive;
+    font-weight: bold;
+    font-size: 3.5rem;
+    color: #DCAE96;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    margin-bottom: 10px;
+    padding-top: 20px;
+}
+
+h1.gallery {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 80px;
+    line-height: 80px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+h2 {
+    font-weight: 400;
+    color: #DCAE96;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+h3 {
+    margin-top: 100px;
+    font-size: 1em;
+    color: #333;
+    text-align: center;
+}
+
+/* ============================= */
+/* Layout Variants              */
+/* ============================= */
+body.login {
+    background: url('/images/dayLogin.gif') center/cover no-repeat;
+    flex-direction: column;
+}
+
+body.uploadSuccess {
+    background-color: black;
+    color: white;
+}
+
+body.gallery {
+    background: url('/images/gallery.gif') center/cover no-repeat fixed;
+    padding-top: 440px;
+    background-color: #f9f9f9;
+}
+
+/* ============================= */
+/* Forms & Inputs               */
+/* ============================= */
+form {
+    background-color: transparent;
+    padding: 0;
+}
+
+label {
+    font-weight: 300;
+    color: #DCAE96;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    display: block;
+}
+
+input[type="password"] {
+    background: transparent;
+    color: #DCAE96;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="password"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+button {
+    background-color: #DCAE96;
+    color: #000080;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #000080;
+    color: #DCAE96;
+}
+
+p.error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* ============================= */
+/* Login Container              */
+/* ============================= */
+.login-container {
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    max-width: 90%;
+    text-align: center;
+}
+
+/* ============================= */
+/* Upload Success Page          */
+/* ============================= */
+.uploadMessage {
+    text-align: center;
+}
+
+.loadingCat {
+    margin-top: 20px;
+    width: 150px;
+    height: auto;
+}
+
+/* ============================= */
+/* Gallery Layout               */
+/* ============================= */
+.gallery-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    padding: 30px;
+    width: 100%;
+    max-width: 1200px;
+    min-height: calc(100vh - 120px);
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.total-photos {
+    margin-top: 20px;
+    text-align: center;
+    color: #fff;
+    font-size: 1.2em;
+}
+
+/* ============================= */
+/* Image Grid & Items           */
+/* ============================= */
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-auto-rows: minmax(100px, auto);
+    gap: 20px 20px;
+    row-gap: 340px;
+    margin-bottom: 40px;
+    padding: 10px;
+    max-width: 1200px;
+    width: 100%;
+    height: 600px;
+    overflow-y: scroll;
+}
+
+.image-item {
+    position: relative;
+    height: 400px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.image-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.image-item form {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    margin: 0;
+}
+
+.image-item button {
+    background-color: #8b0000;
+    color: #DCAE96;
+    padding: 5px 10px;
+}
+
+.image-item button:hover {
+    background-color: #000080;
+}
+
+/* ============================= */
+/* Upload Section               */
+/* ============================= */
+.upload-section {
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 15px auto;
+    width: 100%;
+    max-width: 500px;
+}
+
+.upload-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    color: #DCAE96;
+}
+
+.upload-section button {
+    background-color: #DCAE96;
+    color: #000080;
+}
+
+.upload-section button:hover {
+    background-color: #000080;
+    color: #DCAE96;
+}
+
+/* ============================= */
+/* Overlay & Preview            */
+/* ============================= */
+#image-preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    cursor: zoom-out;
+}
+
+#preview-image {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    text-align: center;
+    color: white;
+    font-size: 2rem;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* ============================= */
+/* Animation                    */
+/* ============================= */
+@keyframes pulseText {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+.pulse {
+    animation: pulseText 2s infinite;
+}
+
+/* ============================= */
+/* Logout Button                */
+/* ============================= */
+.logout-section {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 2000;
+}
+
+.logout-section a {
+    font-size: 1.2em;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.logout-section a:hover {
+    text-decoration: underline;
+}

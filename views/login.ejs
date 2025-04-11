@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic Setup -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <!-- External Styles and Fonts -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Poppins:wght@300;400;600
+&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+</head>
+<body class="login">
+    <div class="login-container">
+        <h1>As A Friend</h1>
+        <h2>Login</h2>
+
+        <!-- Display error message if login fails -->
+        <% if (error) { %>
+            <p class="error-message"><%= error %></p>
+        <% } %>
+
+        <!-- Login Form -->
+        <form action="/login" method="POST">
+            <label for="password">Shhh, enter the super secret passkey:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <!-- JavaScript File -->
+    <script src="/js/scripts.js"></script>
+    
+</body>
+</html>

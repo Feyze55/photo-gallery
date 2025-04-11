@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic Page Setup -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Poppins:wght@300;400;600
+&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+</head>
+<body class="gallery">
+    <!-- Sticky Header -->
+    <h1 class="gallery">Welcome to the Platonic Portfolio!</h1>
+
+    <!-- Translucent Gallery Box -->
+    <div class="gallery-box">
+        <!-- Gallery Container -->
+        <div class="gallery-container">
+
+            <!-- Loading Overlay (used by JS) -->
+            <div id="loading-overlay"></div>
+
+            <!-- Image Grid -->
+            <div class="image-grid">
+                <% images.forEach(function(image) { %>
+                    <div class="image-item">
+                        <img src="/uploads/<%= image %>" alt="<%= image %>" />
+                        <% if (loggedIn) { %>
+                            <!-- Delete Button (only for logged-in users) -->
+                            <form class="delete-form" action="/delete/<%= image %>" method="POST">
+                                <button type="submit" class="delete-button">Delete</button>
+                            </form>
+                        <% } %>
+                    </div>
+                <% }); %>
+            </div>
+
+            <!-- Photo Count Display -->
+            <div class="total-photos">
+                <p>There are currently <%= photoCount %> photos in the gallery.</p>
+            </div>
+        </div>
+
+        <!-- Fullscreen Image Preview (toggled with JS) -->
+        <div id="image-preview-overlay" style="display: none;">
+            <img id="preview-image" src="" alt="Preview">
+        </div>
+
+        <% if (loggedIn) { %>
+            <!-- Upload Form (only for logged-in users) -->
+            <div class="upload-section">
+                <h2>Upload a New Image</h2>
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="photo" required />
+                    <button type="submit">Upload</button>
+                </form>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Logout Button (visible to logged-in users) -->
+    <div class="logout-section">
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- JavaScript File -->
+    <script src="/js/scripts.js"></script>
+</body>
+</html>
