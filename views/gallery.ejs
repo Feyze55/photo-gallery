@@ -32,7 +32,7 @@
                             <img src="<%= image.url %>" alt="Gallery Image" loading="lazy">
 
                             <% if (loggedIn) { %>
-                                <form class="delete-form" action="/delete/<%= image.public_id %>" method="POST">
+                                <form class="delete-form" action="/delete/<%= encodeURIComponent(image.public_id) %>" method="POST">
                                     <button type="submit" class="delete-button">Delete</button>
                                 </form>
                             <% } %>
