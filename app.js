@@ -116,8 +116,8 @@ app.post('/upload', checkLogin, upload.single('photo'), (req, res) => {
 });
 
 // --- Delete Route (supports slashes in public_id) ---
-app.post('/delete/*', checkLogin, async (req, res) => {
-    const public_id = req.params[0]; // This captures the full path including slashes
+app.post('/delete/:public_id(*)', checkLogin, async (req, res) => {
+    const public_id = req.params.public_id;
 
     try {
         await cloudinary.uploader.destroy(public_id);
