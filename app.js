@@ -1,49 +1,47 @@
+require('dotenv').config(); // Load env variables
 const express = require('express');
 const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 
-// --- Configuration ---
-app.set('view engine', 'ejs');
-app.use(express.urlencoded({ extended: true }));
+// --- Cloudinary Configuration ---
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-// Static file serving
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Session setup
-app.use(session({
-    secret: 'Amielperd55',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
-}));
-
-// --- File Upload Setup ---
-const uploadFolder = 'uploads/';
-if (!fs.existsSync(uploadFolder)) {
-    fs.mkdirSync(uploadFolder);
-}
-
-const storage = multer.diskStorage({
-    destination: (_, __, cb) => cb(null, uploadFolder),
-    filename: (_, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+// --- Cloudinary Upload Setup ---
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: 'photo-gallery',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'bmp'],
+        transformation: [{ width: 1200, crop: 'limit' }]
+    }
 });
 
 const upload = multer({
     storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
-    fileFilter: (_, file, cb) => {
-        const validTypes = /jpeg|jpg|png|gif|bmp/;
-        const isValid = validTypes.test(file.mimetype) && validTypes.test(path.extname(file.originalname).toLowerCase());
-        cb(isValid ? null : new Error('Only image files are allowed'), isValid);
-    }
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
 
 // --- Middleware ---
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'default_secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set true if using HTTPS
+}));
+
 function checkLogin(req, res, next) {
     if (!req.session.loggedIn) return res.redirect('/login');
     next();
@@ -52,19 +50,18 @@ function checkLogin(req, res, next) {
 // --- Routes ---
 app.get('/login', (req, res) => {
     const error = req.session.loginError;
-    req.session.loginError = null; // Clear the error after displaying it
+    req.session.loginError = null;
     res.render('login', { error });
 });
 
 app.post('/login', (req, res) => {
-    const correctPassword = 'Amielperd55';
+    const correctPassword = process.env.LOGIN_PASSWORD || 'Amielperd55';
     if (req.body.password === correctPassword) {
         req.session.loggedIn = true;
         return res.redirect('/gallery');
-    } else {
-        req.session.loginError = 'Incorrect password. Please try again.';
-        return res.redirect('/login'); // Redirect instead of rendering directly
     }
+    req.session.loginError = 'Incorrect password. Please try again.';
+    return res.redirect('/login');
 });
 
 app.get('/logout', (req, res) => {
@@ -74,72 +71,61 @@ app.get('/logout', (req, res) => {
     });
 });
 
-const itemsPerPage = 20; // Number of images to display per page
+const itemsPerPage = 20;
 
-app.get('/gallery', checkLogin, (req, res) => {
-    const page = parseInt(req.query.page) || 1;  // Default to page 1 if no page param
-    fs.readdir(uploadFolder, (err, files) => {
-        if (err) {
-            console.error('Error reading upload folder:', err);
-            return res.status(500).send('Error reading upload folder');
-        }
+app.get('/gallery', checkLogin, async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
 
-        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif|bmp)$/i.test(file));
+    try {
+        const result = await cloudinary.search
+            .expression('folder:photo-gallery')
+            .sort_by('public_id', 'desc')
+            .max_results(500) // adjust as needed
+            .execute();
 
-        // Pagination logic
-        const totalPages = Math.ceil(imageFiles.length / itemsPerPage);
-        const imagesOnPage = imageFiles.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+        const images = result.resources.map(img => ({
+            url: img.secure_url,
+            public_id: img.public_id
+        }));
+
+        const totalPages = Math.ceil(images.length / itemsPerPage);
+        const imagesOnPage = images.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
         res.render('gallery', {
             images: imagesOnPage,
-            photoCount: imageFiles.length,
-            totalPages: totalPages,
+            photoCount: images.length,
+            totalPages,
             currentPage: page,
             loggedIn: req.session.loggedIn
         });
-    });
+    } catch (err) {
+        console.error('Cloudinary error:', err);
+        res.status(500).send('Error retrieving images from Cloudinary');
+    }
 });
 
 app.get('/', checkLogin, (req, res) => res.redirect('/gallery'));
 
-app.get('/gallery', checkLogin, (req, res) => {
-    fs.readdir(uploadFolder, (err, files) => {
-        if (err) {
-            console.error('Error reading upload folder:', err);
-            return res.status(500).send('Error reading upload folder');
-        }
-
-        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif|bmp)$/i.test(file));
-        res.render('gallery', {
-            images: imageFiles,
-            photoCount: imageFiles.length,
-            loggedIn: req.session.loggedIn
-        });
-    });
-});
-
 app.post('/upload', checkLogin, upload.single('photo'), (req, res) => {
     if (req.file) {
-        console.log(`File uploaded: ${req.file.filename}`);
+        console.log(`Uploaded to Cloudinary: ${req.file.path}`);
         res.render('uploadSuccess', { message: 'File uploaded successfully!' });
     } else {
         res.send('No file uploaded!');
     }
 });
 
-app.post('/delete/:image', checkLogin, (req, res) => {
-    const imagePath = path.join(__dirname, uploadFolder, req.params.image);
-    fs.unlink(imagePath, err => {
-        if (err) {
-            console.error('Error deleting the image:', err);
-            return res.status(500).send('Failed to delete the image');
-        }
-        console.log(`Image ${req.params.image} deleted successfully`);
+app.post('/delete/:public_id', checkLogin, async (req, res) => {
+    try {
+        await cloudinary.uploader.destroy(req.params.public_id);
+        console.log(`Deleted from Cloudinary: ${req.params.public_id}`);
         res.redirect('/gallery');
-    });
+    } catch (err) {
+        console.error('Failed to delete from Cloudinary:', err);
+        res.status(500).send('Failed to delete image');
+    }
 });
 
 // --- Start Server ---
-app.listen(3000, () => {
-    console.log('Server running at http://localhost:3000');
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
