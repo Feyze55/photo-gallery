@@ -10,9 +10,9 @@ const app = express();
 
 // --- Cloudinary Configuration ---
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    cloud_name: process.env.dxsbz4xml,
+    api_key: process.env.387127973147834,
+    api_secret: process.env.ieh5bmdgr6us4W8U4S3Q3XFfVBg
 });
 
 // --- Cloudinary Upload Setup ---
@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'default_secret',
+    secret: process.env.6f84ca15a1e250304548ffbdd4e3d8116d469669a135d918afd74535e45af9e853fa74b722f9fb632071f43cbed03f861cd42c7d2246d051a9e5b10d67495840 || 'default_secret',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Set true if using HTTPS
