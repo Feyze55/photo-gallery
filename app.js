@@ -116,10 +116,12 @@ app.post('/upload', checkLogin, upload.single('photo'), (req, res) => {
 });
 
 // --- Delete Route ---
-app.post('/delete/:public_id', checkLogin, async (req, res) => {
+app.post('/delete/*', checkLogin, async (req, res) => {
+    const public_id = req.params[0]; // This captures the full path including slashes
+
     try {
-        await cloudinary.uploader.destroy(req.params.public_id);
-        console.log(`🗑️ Deleted from Cloudinary: ${req.params.public_id}`);
+        await cloudinary.uploader.destroy(public_id);
+        console.log(`🗑️ Deleted from Cloudinary: ${public_id}`);
         res.redirect('/gallery');
     } catch (err) {
         console.error('❌ Failed to delete from Cloudinary:', err);
