@@ -70,6 +70,13 @@ body.login {
 body.uploadSuccess {
     background-color: black;
     color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertical centering */
+    align-items: center;     /* horizontal centering */
+    height: 100vh;           /* full viewport height */
+    margin: 0;               /* remove default margin */
+    text-align: center;      /* optional: center text */
 }
 
 body.gallery {
