@@ -28,13 +28,15 @@
             <div class="image-grid">
                 <% images.forEach(function(image) { %>
                     <div class="image-item">
-                        <img src="<%= image.url %>" alt="Gallery Image" loading="lazy">
+                        <div class="image-wrapper">
+                            <img src="<%= image.url %>" alt="Gallery Image" loading="lazy">
 
-                        <% if (loggedIn) { %>
-                            <form class="delete-form" action="/delete/<%= image.public_id %>" method="POST">
-                                <button type="submit" class="delete-button">Delete</button>
-                            </form>
-                        <% } %>
+                            <% if (loggedIn) { %>
+                                <form class="delete-form" action="/delete/<%= image.public_id %>" method="POST">
+                                    <button type="submit" class="delete-button">Delete</button>
+                                </form>
+                            <% } %>
+                        </div>
                     </div>
                 <% }); %>
             </div>

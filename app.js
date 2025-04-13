@@ -109,7 +109,7 @@ app.get('/gallery', checkLogin, async (req, res) => {
 app.post('/upload', checkLogin, upload.single('photo'), (req, res) => {
     if (req.file) {
         console.log(`✅ Uploaded to Cloudinary: ${req.file.path}`);
-        res.redirect('/gallery'); // redirect instead of rendering a separate page
+        res.redirect('/gallery');
     } else {
         res.send('❌ No file uploaded!');
     }
