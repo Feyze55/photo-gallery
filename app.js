@@ -115,7 +115,7 @@ app.post('/upload', checkLogin, upload.single('photo'), (req, res) => {
     }
 });
 
-// --- Delete Route ---
+// --- Delete Route (supports slashes in public_id) ---
 app.post('/delete/*', checkLogin, async (req, res) => {
     const public_id = req.params[0]; // This captures the full path including slashes
 
