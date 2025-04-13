@@ -5,6 +5,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: #DCAE96;
 }
 
 body {
@@ -50,6 +52,9 @@ h3 {
     text-align: center;
 }
 
+p.error-message {
+    color: red;
+}
 /* ============================= */
 /* Body Variants                */
 /* ============================= */
@@ -72,6 +77,23 @@ body.gallery {
     background-color: #f9f9f9;
     padding-top: 100px; /* Space for fixed header */
     display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ============================= */
+/* Login Layout                 */
+/* ============================= */
+.login-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    padding: 20px;
+    width: 30%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    margin: auto auto;
+    display: flex;
+    justify-content: center;
     flex-direction: column;
     align-items: center;
 }

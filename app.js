@@ -10,12 +10,12 @@ const app = express();
 
 // --- Cloudinary Configuration ---
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Use your Cloudinary cloud name
-    api_key: process.env.CLOUDINARY_API_KEY, // Use your Cloudinary API key
-    api_secret: process.env.CLOUDINARY_API_SECRET // Use your Cloudinary API secret
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// --- Cloudinary Upload Setup ---
+// --- Multer Storage with Cloudinary ---
 const storage = new CloudinaryStorage({
     cloudinary,
     params: {
@@ -27,7 +27,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({
     storage,
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB
 });
 
 // --- Middleware ---
@@ -39,7 +39,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'default_secret',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Set true if using HTTPS
+    cookie: { secure: false }
 }));
 
 function checkLogin(req, res, next) {
@@ -47,7 +47,7 @@ function checkLogin(req, res, next) {
     next();
 }
 
-// --- Routes ---
+// --- Authentication Routes ---
 app.get('/login', (req, res) => {
     const error = req.session.loginError;
     req.session.loginError = null;
@@ -71,6 +71,7 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// --- Gallery Route ---
 const itemsPerPage = 20;
 
 app.get('/gallery', checkLogin, async (req, res) => {
@@ -80,7 +81,7 @@ app.get('/gallery', checkLogin, async (req, res) => {
         const result = await cloudinary.search
             .expression('folder:photo-gallery')
             .sort_by('public_id', 'desc')
-            .max_results(500) // adjust as needed
+            .max_results(500)
             .execute();
 
         const images = result.resources.map(img => ({
@@ -104,28 +105,31 @@ app.get('/gallery', checkLogin, async (req, res) => {
     }
 });
 
-app.get('/', checkLogin, (req, res) => res.redirect('/gallery'));
-
+// --- Upload Route ---
 app.post('/upload', checkLogin, upload.single('photo'), (req, res) => {
     if (req.file) {
-        console.log(`Uploaded to Cloudinary: ${req.file.path}`);
-        res.render('uploadSuccess', { message: 'File uploaded successfully!' });
+        console.log(`✅ Uploaded to Cloudinary: ${req.file.path}`);
+        res.redirect('/gallery'); // redirect instead of rendering a separate page
     } else {
-        res.send('No file uploaded!');
+        res.send('❌ No file uploaded!');
     }
 });
 
+// --- Delete Route ---
 app.post('/delete/:public_id', checkLogin, async (req, res) => {
     try {
         await cloudinary.uploader.destroy(req.params.public_id);
-        console.log(`Deleted from Cloudinary: ${req.params.public_id}`);
+        console.log(`🗑️ Deleted from Cloudinary: ${req.params.public_id}`);
         res.redirect('/gallery');
     } catch (err) {
-        console.error('Failed to delete from Cloudinary:', err);
+        console.error('❌ Failed to delete from Cloudinary:', err);
         res.status(500).send('Failed to delete image');
     }
 });
 
+// --- Redirect Root to Gallery ---
+app.get('/', checkLogin, (req, res) => res.redirect('/gallery'));
+
 // --- Start Server ---
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
